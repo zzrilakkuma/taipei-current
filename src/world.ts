@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { makeFlagTexture } from './text'
+import { makeFlagTexture, BRAND_ORANGE } from './text'
 
 /** 簡單的 2D 雜訊（value noise），用來堆山 */
 function hash(x: number, y: number) { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s) }
@@ -112,8 +112,9 @@ export function buildWorld(scene: THREE.Scene): World {
   }
   const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 13.4, 8), trussMat)
   beam.rotation.z = Math.PI / 2; beam.position.set(0, 8.2, -3.2); stage.add(beam)
-  // 背板：海藍橫幅
-  const bannerMat = new THREE.MeshStandardMaterial({ color: '#1e9c8a', roughness: 0.9, side: THREE.DoubleSide })
+  // 背板：競選橘色橫幅
+  // 背板背光，補一點自發光讓橘色不會變棕
+  const bannerMat = new THREE.MeshStandardMaterial({ color: BRAND_ORANGE, emissive: BRAND_ORANGE, emissiveIntensity: 0.55, roughness: 0.9, side: THREE.DoubleSide })
   const banner = new THREE.Mesh(new THREE.PlaneGeometry(13, 3.6), bannerMat)
   banner.position.set(0, 6, -3.3); stage.add(banner)
   stage.position.z = -8
@@ -121,13 +122,14 @@ export function buildWorld(scene: THREE.Scene): World {
 
   // 旗幟：兩支旗桿，旗面用 shader 飄動
   const flags: THREE.Mesh[] = []
-  const flagKinds: ('independence' | 'taiwanguo')[] = ['independence', 'taiwanguo']
+  const flagKinds: ('island' | 'wave')[] = ['island', 'wave']
   flagKinds.forEach((kind, i) => {
     const x = i === 0 ? -9.5 : 9.5
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 12, 8), new THREE.MeshStandardMaterial({ color: '#dcdcdc', metalness: 0.5, roughness: 0.4 }))
     pole.position.set(x, 6, -7); group.add(pole)
     const geo = new THREE.PlaneGeometry(4.5, 3, 24, 12)
-    const mat = new THREE.MeshStandardMaterial({ map: makeFlagTexture(kind), side: THREE.DoubleSide, roughness: 0.9 })
+    const tex = makeFlagTexture(kind)
+    const mat = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: '#ffffff', emissiveIntensity: 0.5, side: THREE.DoubleSide, roughness: 0.9 })
     const f = new THREE.Mesh(geo, mat)
     f.position.set(x + (i === 0 ? 2.3 : -2.3), 10.2, -7)
     f.castShadow = true

@@ -62,21 +62,24 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 /** 旗面貼圖：以 canvas 畫出（自製，不使用外部圖片）。 */
-export function makeFlagTexture(kind: 'independence' | 'taiwanguo'): THREE.CanvasTexture {
+/** 競選主色：puma.taipei 的橘色 */
+export const BRAND_ORANGE = '#db6a41'
+
+export function makeFlagTexture(kind: 'island' | 'wave'): THREE.CanvasTexture {
   const c = document.createElement('canvas'); c.width = 512; c.height = 342
   const ctx = c.getContext('2d')!
-  if (kind === 'independence') {
-    // 綠底白色台灣島：常見的台灣獨立旗幟樣式（自行繪製）
-    ctx.fillStyle = '#1f8a3b'; ctx.fillRect(0, 0, 512, 342)
+  ctx.fillStyle = BRAND_ORANGE; ctx.fillRect(0, 0, 512, 342)
+  if (kind === 'island') {
+    // 橘底白色台灣島（自行繪製）
     drawTaiwanIsland(ctx, 256, 171, 120, '#ffffff')
   } else {
-    // 「台灣國」旗：自製設計——藍綠漸層海洋、白色島嶼與字樣
-    const g = ctx.createLinearGradient(0, 0, 0, 342)
-    g.addColorStop(0, '#1b7f5f'); g.addColorStop(1, '#0f5f9c')
-    ctx.fillStyle = g; ctx.fillRect(0, 0, 512, 342)
-    drawTaiwanIsland(ctx, 160, 171, 95, '#ffffff')
-    ctx.fillStyle = '#fff'; ctx.font = `900 92px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-    ctx.fillText('台灣國', 350, 171)
+    // 橘底白色洋流波浪（自製設計）
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 22; ctx.lineCap = 'round'
+    for (const y of [120, 171, 222]) {
+      ctx.beginPath()
+      for (let x = 70; x <= 442; x += 8) { const Y = y + Math.sin((x - 70) / 40) * 18; x === 70 ? ctx.moveTo(x, Y) : ctx.lineTo(x, Y) }
+      ctx.stroke()
+    }
   }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace
   return t
