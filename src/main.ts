@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { buildWorld } from './world'
-import { makeFigure, makeCrowd, CheerBubbles } from './figures'
+import { makePuma, makeCrowd, CheerBubbles } from './figures'
 import { makeTextSprite } from './text'
 import { POLICIES, HEART, type Policy } from './policies'
 import { Music } from './youtube'
@@ -56,8 +56,8 @@ if (innerHeight > innerWidth) orbitGoal.radius = 34
 // ---------- 世界、人物、觀眾 ----------
 const world = buildWorld(scene)
 
-// 沈伯洋：台上揮手（低多邊形人物，白襯衫、眼鏡）
-const puma = makeFigure('#f4f4f4', '#f1c9a5', 1.6)
+// 沈伯洋：台上揮手（高瘦、短捲髮、黑框眼鏡、淡色西裝）
+const puma = makePuma(1.3)
 puma.group.position.set(0, 1.2, -8)
 scene.add(puma.group)
 
